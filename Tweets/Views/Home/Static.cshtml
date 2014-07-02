@@ -1,0 +1,205 @@
+﻿@model Tweets.Models.TweetsDB
+
+@{
+    ViewBag.Title = "Static";
+}
+
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+
+
+<section class="content-wrapper main-content clear-fix">
+    <div>
+        <h3>Tweets List</h3>
+        <input type="button" value="GetAll" onclick="GetAllData();" />
+
+    </div>
+    <div>
+        <h4>Tweets Favorit List</h4>
+        <ul id="TweetFavorit" />
+
+    </div>    
+
+    <div>
+        <h4>Tweets Retweet List</h4>
+        <ul id="TweetRetweet" />
+
+    </div>
+        
+    <div>
+        <h4>Tweets Mentiond List</h4>
+        <ul id="TweetMentiond" />
+    </div>
+        
+    <div>
+        <h4>Tweets Followed List</h4>
+        <ul id="TweetFollowed" />
+    </div>
+        
+   
+
+
+    <script type="text/javascript">
+
+        var rootUrl = "http://" + document.location.hostname + ":" + window.location.port;
+        var apiUrl = '/api/Static';
+
+        function GetAllData() {
+
+            GetFavorit();
+            GetRetweet();
+            GetMentiond();
+            GetFollowed();
+        }        
+
+        function GetFavorit()
+        {
+            //debugger;
+            //var id = 1;
+            //$.getJSON(apiUrl + '/' + id)
+            //    .done(function (data) {
+            //        DisplayWanerList(data);
+            //    })
+            //    .fail(function (jqXHR, textStatus, err) {
+            //        $('#TW').text('Error: ' + err);
+            //    });
+
+            //$("#emps").empty();
+            $.ajax({
+                url: rootUrl + apiUrl + '/' + 1,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    //alert(data)
+                    DisplayWanerList(data);
+                },
+                error: function () {
+                    // alert(data)
+                    alert('Some error occured');
+                }
+            });
+        }
+
+        function GetRetweet()
+        {
+            //var id = 2;
+            //$.getJSON(apiUrl + '/' + id)
+            //    .done(function (data) {
+            //        DisplayRetweetList(data);
+            //    })
+            //    .fail(function (jqXHR, textStatus, err) {
+            //        $('#TW').text('Error: ' + err);
+            //    });
+
+            //$("#emps").empty();
+
+            $.ajax({
+                url: rootUrl + apiUrl + '/' + 2,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    //alert(data)
+                    DisplayRetweetList(data);
+                },
+                error: function () {
+                    // alert(data)
+                    alert('Some error occured');
+                }
+            });
+        }
+
+        function GetMentiond()
+        {
+            var id = 3;
+            $.getJSON(apiUrl + '/' + id)
+                .done(function (data) {
+                    DisplayMentiondList(data);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#TW').text('Error: ' + err);
+                });
+
+            //$("#emps").empty();
+            //$.ajax({
+            //    url: rootUrl + apiUrl,
+            //    type: 'GET',
+            //    dataType: 'json',
+            //    success: function (data) {
+            //        //alert(data)
+            //        DisplayMentiondList(data);
+            //    },
+            //    error: function () {
+            //        // alert(data)
+            //        alert('Some error occured');
+            //    }
+            //});
+        }
+
+        function GetFollowed()
+        {
+            var id = 4;
+            $.getJSON(apiUrl + '/' + id)
+                .done(function (data) {
+                    DisplayFollowedList(data);
+                })
+                .fail(function (jqXHR, textStatus, err) {
+                    $('#TW').text('Error: ' + err);
+                });
+
+            ////$("#emps").empty();
+            //$.ajax({
+            //    url: rootUrl + apiUrl,
+            //    type: 'GET',
+            //    dataType: 'json',
+            //    success: function (data) {
+            //        //alert(data)
+            //        DisplayFollowedList(data);
+            //    },
+            //    error: function () {
+            //        // alert(data)
+            //        alert('Some error occured');
+            //    }
+            //});
+        }
+        
+        function DisplayWanerList(Tweets) {
+            $("#TweetFavorit").empty();
+            var strResult = "<table class='table'><th>ID</th><th>Name</th><th>Title</th><th>Retweet</th><th>Mentiond</th><th>Followed</th><th>Favorit</th>";
+            $.each(Tweets, function (index, Tweet) {
+                strResult += "<tr><td>" + Tweet.TweetsId + "</td><td> " + Tweet.TweetsName + "</td><td>" + Tweet.tweet_Title + "</td><td>" + Tweet.Tweet_Retweet + "</td><td>" + Tweet.Tweet_Mentiond + "</td><td>" + Tweet.Tweet_Followed + "</td><td>" + Tweet.Tweet_Favorit + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#TweetFavorit").html(strResult);
+        }
+
+        function DisplayRetweetList(Tweets) {
+            $("#TweetRetweet").empty();
+            var strResult = "<table class='table'><th>ID</th><th>Name</th><th>Title</th><th>Retweet</th><th>Mentiond</th><th>Followed</th><th>Favorit</th>";
+            $.each(Tweets, function (index, Tweet) {
+                strResult += "<tr><td>" + Tweet.TweetsId + "</td><td> " + Tweet.TweetsName + "</td><td>" + Tweet.tweet_Title + "</td><td>" + Tweet.Tweet_Retweet + "</td><td>" + Tweet.Tweet_Mentiond + "</td><td>" + Tweet.Tweet_Followed + "</td><td>" + Tweet.Tweet_Favorit + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#TweetRetweet").html(strResult);
+        }
+
+        function DisplayMentiondList(Tweets) {
+            $("#TweetMentiond").empty();
+            var strResult = "<table class='table'><th>ID</th><th>Name</th><th>Title</th><th>Retweet</th><th>Mentiond</th><th>Followed</th><th>Favorit</th>";
+            $.each(Tweets, function (index, Tweet) {
+                strResult += "<tr><td>" + Tweet.TweetsId + "</td><td> " + Tweet.TweetsName + "</td><td>" + Tweet.tweet_Title + "</td><td>" + Tweet.Tweet_Retweet + "</td><td>" + Tweet.Tweet_Mentiond + "</td><td>" + Tweet.Tweet_Followed + "</td><td>" + Tweet.Tweet_Favorit + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#TweetMentiond").html(strResult);
+        }
+
+        function DisplayFollowedList(Tweets) {
+            $("#TweetFollowed").empty();
+            var strResult = "<table class='table'><th>ID</th><th>Name</th><th>Title</th><th>Retweet</th><th>Mentiond</th><th>Followed</th><th>Favorit</th>";
+            $.each(Tweets, function (index, Tweet) {
+
+                strResult += "<tr><td>" + Tweet.TweetsId + "</td><td> " + Tweet.TweetsName + "</td><td>" + Tweet.tweet_Title + "</td><td>" + Tweet.Tweet_Retweet + "</td><td>" + Tweet.Tweet_Mentiond + "</td><td>" + Tweet.Tweet_Followed + "</td><td>" + Tweet.Tweet_Favorit + "</td></tr>";
+            });
+            strResult += "</table>";
+            $("#TweetFollowed").html(strResult);
+        }
+
+ </script>

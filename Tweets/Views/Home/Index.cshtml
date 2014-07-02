@@ -1,0 +1,274 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<body>
+    <header>
+        <div>
+         
+        </div>
+        <script src="~/Scripts/jquery-1.10.2.js"></script>
+
+    </header>
+    <div id="body">
+        
+        <section class="content-wrapper main-content clear-fix">
+       
+   
+  
+        <div>
+            <h3>Add Tweeets </h3>
+            <table> 
+
+
+         
+
+                <tr><td>Name</td><td><input type="text" id="txtEditName"><input type="hidden" id="TweetsId"></td></tr>
+                
+                <tr><td>Title</td><td><input type="text" id="txtEditTitle" ></td></tr>
+                
+             
+                
+                <tr><td>Retweet</td><td><input type="text" id="txtEditRetweet"></td></tr>
+                
+                <tr><td>Mentiond</td><td><input type="text" id="txtEditMentiond" ></td></tr>
+                
+                <tr><td>Followed</td><td><input type="text" id="txtEditFollowed" ></td></tr>
+                
+               
+                
+                <tr><td>Favorit</td><td><input type="text" id="txtEditFavorit" ></td></tr>
+
+
+
+            <tr>
+
+                
+
+             <td colspan="3" align="center">
+                 
+                 <table>
+                     <tr>
+
+                         <td>
+                             <input type="button" value="Clear" onclick="ClearForm();" />
+                         </td>
+                         <td>
+                             <input type="button" value="Add" onclick="AddTweets();" />
+                         </td>
+
+                         <td>
+                             <input type="button" value="Update" onclick="UpdateTweet();" />
+
+                         </td>
+
+                         <td>
+                             <input type="button" value="Delete" onclick="DeleteTweets();" />
+
+                         </td>
+
+                     </tr>
+
+                 </table>
+                
+                
+                </td>
+            
+            
+            </tr>
+            </table>
+            
+            
+        </div>
+
+            <div>
+                <h3>Tweeets List</h3>
+                <input type="button" value="GetAll" onclick="GetAllTweets();" />
+                <ul id="Tweetlst" />
+            </div>
+        </section>
+           
+    </div>
+    
+<script type="text/javascript" >
+
+    var rootUrl = "http://" + document.location.hostname + ":" + window.location.port;
+    var apiUrl = '/api/Mongo';
+
+    $(document).ready(function () {
+      
+    });
+
+    function GetAllTweets() {
+     
+       $.ajax({
+           url: rootUrl + apiUrl,
+           type: 'GET',
+           dataType: 'json',
+           success: function (data) {
+               //alert(data)
+               DisplayALLTwitsList(data);
+           },
+           error: function () {
+              // alert(data)
+               alert('Some error occured');
+           }
+       });
+
+
+    }
+
+    
+
+    function FindTweets(Id) {
+        var id = Id;
+        $.getJSON(apiUrl + '/' + id)
+            .done(function (data) {                            
+                ShowTweetForEdit(data);
+            })
+            .fail(function (jqXHR, textStatus, err) {
+                $('#TW').text('Error: ' + err);
+            });
+        }
+
+    function DeleteTweets() {
+
+        if (confirm("Are you Sure To Delete This Item")) {
+
+            var id = $('#TweetsId').val();
+
+            $.ajax({
+                url: rootUrl + apiUrl + '/' + id,
+                type: 'DELETE',
+                dataType: 'json',
+                success: function (data) {
+                    alert('Tweets deleted');
+                    GetAllTweets();
+                    ClearForm();
+                },
+                error: function () {
+                    alert('Tweet not found');
+                }
+            });
+        }
+    }
+
+    function UpdateTweet() {
+
+        var TweetsDB = {
+            TweetsId: $('#TweetsId').val(),
+            TweetsName: $('#txtEditName').val(),
+            tweet_Title: $('#txtEditTitle').val(),
+           
+         
+            Tweet_Retweet: $('#txtEditRetweet').val(),
+            Tweet_Mentiond: $('#txtEditMentiond').val(),
+            Tweet_Followed: $('#txtEditFollowed').val(),
+         
+            Tweet_Favorit: $('#txtEditFavorit').val()
+        };
+
+        $.ajax({
+            url: rootUrl + apiUrl,
+            type: 'PUT',
+            data: JSON.stringify(TweetsDB),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                alert('Tweets updated');
+                GetAllTweets();
+            },
+            error: function () {
+                alert('Some error occured');
+            }
+        });
+
+
+    }
+
+    function AddTweets() {     
+
+        var TweetsDB = {
+            TweetsId: $('#TweetsId').val(),
+            TweetsName: $('#txtEditName').val(),
+            tweet_Title: $('#txtEditTitle').val(),
+     
+            Tweet_Retweet: $('#txtEditRetweet').val(),
+            Tweet_Mentiond: $('#txtEditMentiond').val(),
+            Tweet_Followed: $('#txtEditFollowed').val(),
+         
+            Tweet_Favorit: $('#txtEditFavorit').val()
+
+
+        };
+
+        $.ajax({
+            url: rootUrl + apiUrl,
+            type: 'POST',
+            data: JSON.stringify(TweetsDB),
+            contentType: "application/json;charset=utf-8",
+            success: function (data) {
+                alert('Tweets added');
+                GetAllTweets();
+            },
+            error: function () {
+                alert('Some error occured');
+            }
+        });
+
+
+    }
+
+    function DisplayALLTwitsList(Tweets) {
+        $("#Tweetlst").empty();
+        var strResult = "<table class='table'><th></th><th>ID</th><th>Name</th><th>Title</th><th>Retweet</th><th>Mentiond</th><th>Followed</th><th>Favorit</th>";
+        $.each(Tweets, function (index, Tweet) {
+            strResult += "<tr><td><a href='#' onclick=FindTweets('" + Tweet.TweetsId + "')>Detail</a></td><td>" + Tweet.TweetsId + "</td><td> " + Tweet.TweetsName + "</td><td>" + Tweet.tweet_Title + "</td><td>" + Tweet.Tweet_Retweet + "</td><td>" + Tweet.Tweet_Mentiond + "</td><td>" + Tweet.Tweet_Followed + "</td><td>" + Tweet.Tweet_Favorit + "</td></tr>";
+        });
+        strResult += "</table>";
+        $("#Tweetlst").html(strResult);
+    }
+
+    var Tweet = null;
+
+    function ShowTweetForEdit(Tweet) {
+        
+      
+        if (Tweet == null) {
+
+            alert('Tweet Not Found')
+            return;
+        }
+
+
+        $('#TweetsId').val(Tweet.TweetsId);
+        $('#txtEditName').val(Tweet.TweetsName);
+        $('#txtEditTitle').val(Tweet.tweet_Title);
+       
+        $('#txtEditRetweet').val(Tweet.Tweet_Retweet);
+        $('#txtEditMentiond').val(Tweet.Tweet_Mentiond);
+        $('#txtEditFollowed').val(Tweet.Tweet_Followed);
+       
+        $('#txtEditFavorit').val(Tweet.Tweet_Favorit);
+
+    
+    }
+
+
+
+    function ClearForm()
+    {
+
+        $('#TweetsId').val("0");
+        $('#txtEditName').val("");
+        $('#txtEditTitle').val("");
+      
+        $('#txtEditRetweet').val("");
+        $('#txtEditMentiond').val("");
+        $('#txtEditFollowed').val("");
+        
+        $('#txtEditFavorit').val("");
+
+    }
+</script>
+
+</body>
+</html>
